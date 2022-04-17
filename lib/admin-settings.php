@@ -62,7 +62,13 @@ function bpm_tat_section_text() {
 	echo '</p>';
 }
 
-// Display and fill the form field
+/**
+ * Display and fill the form field
+ *
+ * TODO: Add settings for icon color and other UX improvements that might be requisite for usability.
+ * TODO: Shouldn't we use output buffering here?
+ *
+ */
 function bpm_tat_setting_radio_btn() {
  
 	$options = get_option( 'bpm_tat_options' );

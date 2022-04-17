@@ -145,6 +145,8 @@ class Toggle_Admin_Toolbar
    * @return object of the $admin_bar, modified
    *
    * @since 0.1.0
+   *
+   * @return void
    */
   public function tat_button($admin_bar)
   {
@@ -184,11 +186,6 @@ class Toggle_Admin_Toolbar
   
   /**
    * Include some Javascript
-   *
-   * TODO: #1 Perhaps create an element using JS that can persist and return the admin bar to the page
-   * TODO: #2 Eliminate the admin bar in such a manner that it's restoreable
-   * TODO: Bind the toggle element from #1 and #2 to finalize our toggle feature
-   *
    *
    * @since 0.1.0
    *

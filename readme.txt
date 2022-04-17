@@ -25,8 +25,9 @@ Built by [James Valeii](http://jamesvaleii.com/) / [@jryven](http://twitter.com/
 
 == Frequently Asked Questions ==
 
-= Known Incompatible Plugins? =
 = Where can I report a bug? =
+
+Please report bugs at https://github.com/BoilingPotMedia/toggle-admin-toolbar/issues
 
 == Screenshots ==
 
