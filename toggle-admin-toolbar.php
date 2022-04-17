@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Toggle Admin Toolbar
  * Plugin URI: http://boilingpotmedia.com
- * Description:
+ * Description: Adds options to toggle admin menu visibility.
  * Version: 0.1.0
  * Author: James Valeii
  * Author URI: http://jamesvaleii.com/
@@ -31,20 +31,49 @@ class Toggle_Admin_Toolbar
   public function __construct()
   {
     $this->add_hooks();
-    $this->settings_page();
   }
   
   /**
+   * Should admin bar be removed from the DOM or hidden temporarily.
+   *
+   * @since 0.1.0
+   *
+   * @return bool
+   */
+  public function should_admin_bar_be_toggleable(): bool
+  {
+    $toggleable = get_option('bpm_tat_options'); // bool false if unset or [ 'toggleable' => int 0 ]
+    if ( $toggleable && isset( $toggleable['toggleable'] )):
+      // use database value
+      $toggleable = $toggleable['toggleable'];
+    endif;
+    
+    $toggleable = apply_filters( 'bpm_tat_toggleable', $toggleable );
+    
+    return (bool) $toggleable;
+}
+  
+  /**
    * Add hooks.
+   *
+   * TODO Prevent running frontend features on backend without precluding future settings to allow customizing display. ( if( ! is_admin() ): endif; )
+   *
+   * @hooked load_textdomain
+   * @hooked tat_button
+   * @hooked styles
+   * @hooked script
    *
    * @since 0.1.0
    */
   public function add_hooks()
   {
     add_action('init', [$this, 'load_textdomain']);
-    $this->scripts();
-    $this->styles();
-    add_action('admin_bar_menu', [$this, 'tat_button'], 1);
+    $this->settings_page();
+    if( ! is_admin() ):
+      add_action('admin_bar_menu', [$this, 'tat_button'], 1);
+      $this->scripts();
+      $this->styles();
+    endif;
   }
   
   /**
@@ -58,29 +87,7 @@ class Toggle_Admin_Toolbar
     $plugin_rel_path = dirname(plugin_basename(__FILE__)) . '/languages';
     load_plugin_textdomain($domain, false, $plugin_rel_path);
   }
-  
-  /**
-   * Should admin bar be removed from the DOM or hidden temporarily.
-   *
-   * @return bool
-   * @since 0.1.0
-   *
-   */
-  public function shoould_admin_bar_be_toggleable()
-  {
-    $options = get_option('bpm_tat_options');
-    if ($options && isset($options['toggleable'])) {
-      // Use value from options.
-      $toggleable = $options['toggleable'];
-    } else {
-      // Default value.
-      $toggleable = 0;
-    }
-    $toggleable = apply_filters( 'bpm_tat_toggleable', $toggleable );
-    
-    return (bool) $toggleable;
-  }
-  
+
   /**
    * Create Settings Page.
    *
@@ -116,35 +123,20 @@ class Toggle_Admin_Toolbar
    * @return array of strings, each of which is the markup for a link with additional link
    * @since 0.1.0
    */
-  public function settings_link_on_plugin_page($links)
+  public function settings_link_on_plugin_page($links): array
   {
-    $links[] = '<a href="' .
-      admin_url('options-general.php?page=bpm_tat') .
-      '">' . __('Settings') . '</a>';
+    $links[] = '<a href="'. admin_url('options-general.php?page=bpm_tat') .'">'. __('Settings') .'</a>';
     return $links;
   }
-  
-  /**
-   * On plugin deactivation clean up.
-   *
-   * Remove the plugin option, where settings are stored
-   *
-   * @since 0.1.0
-   */
-  public static function on_deactivation()
-  {
-    delete_option('bpm_tat_options');
-  }
-  
+
   /**
    * Add menu item to WordPress' front end admin bar
    *
    * By calling admin_bar_menu we can add menu items to the WordPress Admin bar.
    *
-   * @param object of the $admin_bar that will be modified
-   * @return object of the $admin_bar, modified
-   *
    * @since 0.1.0
+   *
+   * @param object of the $admin_bar that will be modified
    *
    * @return void
    */
@@ -175,13 +167,14 @@ class Toggle_Admin_Toolbar
       ],
     ];
   
-    if( $this->shoould_admin_bar_be_toggleable() ):
+    if( $this->should_admin_bar_be_toggleable() ):
         $args['title'] = '☰';
         $args['meta']['title'] = __('Click to minimize the admin toolbar.');
         $args['meta']['onclick'] = ('bpm_tat_toggle();');
     endif;
     
     $admin_bar->add_menu( $args );
+  
   }
   
   /**
@@ -193,32 +186,42 @@ class Toggle_Admin_Toolbar
    */
   public function scripts()
   {
-    ob_start(); ?>
-      function bpm_tat_remove(){
-        var wpadminbar = document.getElementById('wpadminbar');
-        wpadminbar.style.visibility = 'hidden';
-        document.documentElement.style.setProperty('margin-top', '0px', 'important');
-      }
-      
-      function bpm_tat_toggle(){
-        var wpadminbar = document.getElementById('wpadminbar');
+   ob_start(); ?>
+    function bpm_tat_create_restore_button() {
         const restoreButton = document.createElement('a');
-        const restoreIcon = document.createTextNode('☰');
-        restoreButton.appendChild( restoreIcon );
-        restoreButton.id = 'maxAdminToolbar';
+        restoreButton.style.visibility = 'hidden';
+        restoreButton.id = 'restoreAdminToolbar';
         restoreButton.title = 'Maximize admin toolbar';
         restoreButton.href = '#';
-        restoreButton.onclick = function(){
-            document.getElementById('maxAdminToolbar').remove();
-            document.documentElement.style.setProperty( 'margin-top', '32px', 'important' );
-            wpadminbar.style.visibility = 'visible';
+        const restoreIcon = document.createTextNode('☰');
+        restoreButton.appendChild(restoreIcon);
+        document.body.insertBefore(restoreButton, document.getElementById('wpadminbar'));
+    }
+    bpm_tat_create_restore_button();
+    
+    function bpm_tat_remove() {
+        var wpadminbar = document.getElementById('wpadminbar');
+        wpadminbar.style.display = 'none';
+        document.documentElement.style.setProperty('margin-top', '0px', 'important');
+    }
+    
+    function bpm_tat_toggle() {
+    
+        bpm_tat_remove();
+        
+        var restoreButton = document.getElementById('restoreAdminToolbar');
+        restoreButton.style.visibility = 'visible';
+        
+        restoreButton.onclick = function () {
+            var wpadminbar = document.getElementById('wpadminbar');
+            wpadminbar.style.display = 'block';
+            document.documentElement.style.setProperty('margin-top', '32px', 'important');
+            this.style.visibility = 'hidden';
         };
-        document.body.insertBefore( restoreButton, wpadminbar );
-        document.documentElement.style.setProperty( 'margin-top', '0px', 'important' );
-        wpadminbar.style.visibility = 'hidden';
-      }<?php
+    }
+      <?php
     $tat_scripts = ob_get_clean();
-    if ( !wp_script_is('tat_scripts', 'enqueued') ):
+    if ( !wp_script_is('tat_scripts') ):
       wp_register_script('tat_scripts', false, [], '0.1.0', 1);
       wp_enqueue_script('tat_scripts');
     endif;
@@ -234,12 +237,13 @@ class Toggle_Admin_Toolbar
    */
   public function styles()
   {
+    $color = get_option('bpm_tat_options') ? get_option('bpm_tat_options')['color'] : '#FFFFFF'; // bool false if unset or [ 'color' => string #?????? ]
     ob_start();
     ?>
-    #maxAdminToolbar {
+    #restoreAdminToolbar {
       position: absolute;
       z-index: 9999999;
-      color: white;
+      color: <?php echo $color; ?>;
       text-decoration: none;
       text-align: center;
       right: 0;
@@ -255,11 +259,23 @@ class Toggle_Admin_Toolbar
     }
     <?php
     $tat_styles = ob_get_clean();
-    if ( !wp_style_is('tat_styles', 'enqueued') ):
+    if ( !wp_style_is('tat_styles') ):
       wp_register_style('tat_styles', FALSE);
       wp_enqueue_style('tat_styles');
     endif;
     wp_add_inline_style('tat_styles', $tat_styles);
+  }
+  
+  /**
+   * On plugin deactivation clean up.
+   *
+   * Remove the plugin option, where settings are stored
+   *
+   * @since 0.1.0
+   */
+  public static function on_deactivation()
+  {
+    delete_option('bpm_tat_options');
   }
   
 }
