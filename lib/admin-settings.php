@@ -13,7 +13,7 @@
    *
    * @return mixed
    */
-  function bpm_tat_option_settings(string $option): mixed
+  function bpm_tat_option_settings( string $option )
   {
     $toggleable = get_option('bpm_tat_options');
     if( isset( $toggleable[$option] ) ):
