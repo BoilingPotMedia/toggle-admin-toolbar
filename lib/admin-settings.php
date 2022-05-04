@@ -31,7 +31,7 @@
   {
     add_options_page(
       __('Toggle Admin Toolbar', 'toggle-admin-toolbar'),
-      __('Toggle Admin Toolbar', 'toggle-admin-toolbar'),
+      __('Toggle Toolbar', 'toggle-admin-toolbar'),
       'manage_options',
       'bpm_tat',
       'bpm_tat_option_page'
@@ -49,7 +49,7 @@
   {
     ?>
     <div class="wrap">
-      <h2><?php _e('Toggle Admin Toolbar', 'toggle-admin-toolbar'); ?></h2>
+      <h2><?php __('Toggle Admin Toolbar', 'toggle-admin-toolbar'); ?></h2>
       <form action="options.php" method="post">
         <?php
           settings_fields('bpm_tat_settings');
@@ -77,28 +77,32 @@
     foreach ($input as $key => $val):
 
       switch ($key) {
+
         case 'toggleable':
           $output[$key] = ($val ? 1 : 0);
           break;
 
         case 'color':
-          if ('' === sanitize_hex_color($val)):
-            $output[$key] = '';
+
+          if ( null === sanitize_hex_color($val) ):
+
+            $output[$key] = sanitize_hex_color('#000000');
+
             add_settings_error(
               'color',
-              'bpm_tat_options',
+              esc_attr('bpm_tat_options'),
               __('The color hex code that you entered was not valid. Codes must begin with a #, and contain 3 or 6 characters.', 'toggle-admin-toolbar')
             );
+
           else:
+
             $output[$key] = sanitize_hex_color($val);
+
           endif;
 
           break;
 
-        default:
-
       }
-
     endforeach;
 
     return $output;
@@ -148,7 +152,7 @@
   function bpm_tat_section_text()
   {
     echo '<p>';
-    _e('Configure the function and style of the admin toggle buttons to suit your preferences.', 'toggle-admin-toolbar');
+    __('Configure the function and style of the admin toggle buttons to suit your preferences.', 'toggle-admin-toolbar');
     echo '</p>';
   }
 
@@ -166,14 +170,14 @@
       <p>
         <label for="bpm_tat_toggleable_true">
           <input type="radio" id="bpm_tat_toggleable_true" name="bpm_tat_options[toggleable]"
-                 value="1" <?php checked(1, $toggleable); ?>/>
-          <?php _e('Yes', 'toggle-admin-toolbar'); ?>
+                 value="1" <?php checked(1, esc_attr($toggleable)); ?>/>
+          <?php __('Yes', 'toggle-admin-toolbar'); ?>
         </label>
         &nbsp;
-        <label for='bpm_tat_toggleable_false'>
-          <input type='radio' id='bpm_tat_toggleable_false' name='bpm_tat_options[toggleable]'
-                 value='0' <?php checked(0, $toggleable); ?>/>
-          <?php _e('No', 'toggle-admin-toolbar'); ?>
+        <label for="bpm_tat_toggleable_false">
+          <input type="radio" id="bpm_tat_toggleable_false" name="bpm_tat_options[toggleable]"
+                 value="0" <?php checked(0, esc_attr($toggleable)); ?>/>
+          <?php __('No', 'toggle-admin-toolbar'); ?>
         </label>
       </p>
     </fieldset>
@@ -194,8 +198,8 @@
     <fieldset>
       <p>
         <input type="text" id="bpm_tat_toggleable_color" name="bpm_tat_options[color]"
-               value="<?php echo sanitize_hex_color($color); ?>"/>
-        <label for='bpm_tat_toggleable_color'>Set a HEX code for the sandwich icon that reopens the admin bar.</label>
+               value="<?php echo esc_attr($color); ?>"/>
+        <label for="bpm_tat_toggleable_color">Set a HEX code for the sandwich icon that reopens the admin bar.</label>
       </p>
     </fieldset>
     <?php

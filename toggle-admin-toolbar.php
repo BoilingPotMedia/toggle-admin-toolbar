@@ -43,13 +43,13 @@ class Toggle_Admin_Toolbar
   public function bpm_tat_should_admin_bar_toggle(): bool
   {
     // bool false if unset or [ 'toggleable' => int 0 ]
-    $tgble = get_option('bpm_tat_options');
-    if ( $tgble && isset( $tgble['toggleable'] )):
+    $t = get_option('bpm_tat_options');
+    if ( $t && isset( $t['toggleable'] )):
       // use database value
-      $tgble = $tgble['toggleable'];
+      $t = $t['toggleable'];
     endif;
-    $tgble = apply_filters( 'bpm_tat_toggleable', $tgble );
-    return (bool) $tgble;
+    $t = apply_filters( 'bpm_tat_toggleable', $t );
+    return (bool) $t;
 }
   
   /**
@@ -172,42 +172,30 @@ class Toggle_Admin_Toolbar
   {
     ob_start(); ?>
       function bpm_tat_make_btn() {
-
         const tatBtn = document.createElement('a');
         tatBtn.style.visibility = 'hidden';
         tatBtn.id = 'restoreAdminToolbar';
         tatBtn.title = 'Maximize admin toolbar';
         tatBtn.href = '#';
-
         const tatIcon = document.createTextNode('☰');
         tatBtn.appendChild(tatIcon);
-
         document.body.insertBefore(tatBtn, document.getElementById('wpadminbar'));
       }
-
       bpm_tat_make_btn();
-
       function bpm_tat_remove() {
         const wpadbr = document.getElementById('wpadminbar');
         wpadbr.style.display = 'none';
         document.documentElement.style.setProperty('margin-top', '0px', 'important');
       }
-
       function bpm_tat_toggle() {
-
         bpm_tat_remove();
-
         const tatBtn = document.getElementById('restoreAdminToolbar');
         tatBtn.style.visibility = 'visible';
-
         tatBtn.onclick = function () {
-
           const wpadbr = document.getElementById('wpadminbar');
           wpadbr.style.display = 'block';
           document.documentElement.style.setProperty('margin-top', '32px', 'important');
-
           this.style.visibility = 'hidden';
-
         };
       }
     <?php
@@ -234,7 +222,7 @@ class Toggle_Admin_Toolbar
     #restoreAdminToolbar {
       position: absolute;
       z-index: 9999999;
-      color: <?php echo sanitize_hex_color( $color ); ?>;
+      color: <?php echo esc_attr( $color ); ?>;
       text-decoration: none;
       text-align: center;
       right: 0;
