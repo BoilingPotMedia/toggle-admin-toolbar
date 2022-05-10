@@ -3,7 +3,7 @@
  * Plugin Name: Toggle Admin Toolbar
  * Plugin URI: http://boilingpotmedia.com
  * Description: Adds options to toggle admin menu visibility.
- * Version: 0.1.0
+ * Version: 1.0.0
  * Author: James Valeii
  * Author URI: http://jamesvaleii.com/
  * Text Domain: toggle-admin-toolbar
@@ -18,7 +18,7 @@ register_deactivation_hook(__FILE__, ['Toggle_Admin_Toolbar', 'bpm_tat_add_deact
 /**
  * Toggle Admin Toolbar Plugin Class.
  *
- * @since 0.1.0
+ * @since 1.0.0
  */
 class Toggle_Admin_Toolbar
 {
@@ -26,7 +26,7 @@ class Toggle_Admin_Toolbar
   /**
    * Constructor to set up plugin.
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   public function __construct()
   {
@@ -36,7 +36,7 @@ class Toggle_Admin_Toolbar
   /**
    * Should admin bar be removed from the DOM or hidden temporarily.
    *
-   * @since 0.1.0
+   * @since 1.0.0
    *
    * @return bool
    */
@@ -55,7 +55,7 @@ class Toggle_Admin_Toolbar
   /**
    * Add hooks.
    *
-   * @since 0.1.0
+   * @since 1.0.0
    *
    * @hooked bpm_tat_button_add_to_admin_menu
    * @hooked styles
@@ -77,7 +77,7 @@ class Toggle_Admin_Toolbar
    * Add to the $links array, an element that contains the html markup
    * for the settings page for this link.
    *
-   * @since 0.1.0
+   * @since 1.0.0
    *
    * @param array of string $links each of which is the markup for a link.
    * @return array of strings, each of which is the markup for a link with additional link
@@ -93,7 +93,7 @@ class Toggle_Admin_Toolbar
    *
    * By calling admin_bar_menu we can add menu items to the WordPress Admin bar.
    *
-   * @since 0.1.0
+   * @since 1.0.0
    *
    * @param object of the $admin_bar that will be modified
    *
@@ -144,7 +144,7 @@ class Toggle_Admin_Toolbar
    * run this plugin with only this primary file; this
    * allows using this single file as a "mu-plugins" plugin.
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   public function bpm_tat_add_settings_page()
   {
@@ -164,7 +164,7 @@ class Toggle_Admin_Toolbar
   /**
    * Include some Javascript
    *
-   * @since 0.1.0
+   * @since 1.0.0
    *
    * @return void
    */
@@ -201,7 +201,7 @@ class Toggle_Admin_Toolbar
     <?php
     $tat_scripts = ob_get_clean();
     if ( !wp_script_is('tat_scripts') ):
-      wp_register_script('tat_scripts', false, [], '0.1.0', 1);
+      wp_register_script('tat_scripts', false, [], '1.0.0', 1);
       wp_enqueue_script('tat_scripts');
     endif;
     wp_add_inline_script('tat_scripts', $tat_scripts);
@@ -210,7 +210,7 @@ class Toggle_Admin_Toolbar
   /**
    * Include some CSS
    *
-   * @since 0.1.0
+   * @since 1.0.0
    *
    * @return void
    */
@@ -250,7 +250,7 @@ class Toggle_Admin_Toolbar
    *
    * Remove the plugin option, where settings are stored
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   public static function bpm_tat_add_deactivation_actions()
   {

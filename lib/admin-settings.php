@@ -7,7 +7,7 @@
   /**
    * Do option call for bpm_tat_options
    *
-   * @since 0.1.0
+   * @since 1.0.0
    *
    * @param string $option a string associated with option value
    *
@@ -25,7 +25,7 @@
   /**
    * Add a menu for our option page
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   function bpm_tat_add_page()
   {
@@ -43,7 +43,7 @@
   /**
    * Draw the option page
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   function bpm_tat_option_page()
   {
@@ -64,7 +64,7 @@
   /**
    * Validate user input
    *
-   * @since 0.1.0
+   * @since 1.0.0
    *
    * @param $input array $_POST from settings form submission
    *
@@ -111,7 +111,7 @@
   /**
    * Register and define the settings
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   function bpm_tat_admin_init()
   {
@@ -147,7 +147,7 @@
   /**
    * Draw the section header
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   function bpm_tat_section_text()
   {
@@ -159,7 +159,7 @@
   /**
    * Display and fill the form field
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   function bpm_tat_keep_toggle_button_visible()
   {
@@ -188,7 +188,7 @@
   /**
    * Display and fill the form field
    *
-   * @since 0.1.0
+   * @since 1.0.0
    */
   function bpm_tat_toggle_button_color()
   {
