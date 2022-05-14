@@ -7,11 +7,11 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Toggle Admin Toolbar on WordPress Frontend
+Adds option to toggle admin toolbar visibility on WordPress frontend.
 
 == Description ==
 
-Built by [James Valeii](http://jamesvaleii.com/) / [@jryven](http://twitter.com/jryven)
+Adds option to toggle admin toolbar visibility on WordPress frontend.
 
 == Installation ==
 
