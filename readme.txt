@@ -2,8 +2,8 @@
 Contributors: jryven
 Tags: email, development
 Requires at least: 4.6
-Tested up to: 5.9.3
-Stable tag: 1.0.0
+Tested up to: 6.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,5 +33,8 @@ Please report bugs at https://github.com/BoilingPotMedia/toggle-admin-toolbar/is
 
 == Changelog ==
 
+= 1.0.1 =
+* Resolving "Called scripts and Styles Incorrectly" Warnings
+
 = 1.0.0 =
-First Release
+* First Release

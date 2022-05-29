@@ -3,7 +3,7 @@
    * Plugin Name: Toggle Admin Toolbar
    * Plugin URI: http://boilingpotmedia.com
    * Description: Adds options to toggle admin menu visibility.
-   * Version: 1.0.0
+   * Version: 1.0.1
    * Author: James Valeii
    * Author URI: http://jamesvaleii.com/
    * Text Domain: toggle-admin-toolbar
@@ -24,12 +24,24 @@
   {
 
     /**
+     * @var $script string javascript created by output buffer that will be enqueued
+     */
+    public $script;
+
+    /**
+     * @var $script string css created by output buffer that will be enqueued
+     */
+    public $style;
+
+    /**
      * Constructor to set up plugin.
      *
      * @since 1.0.0
      */
     public function __construct()
     {
+      $this->bpm_tat_make_script();
+      $this->bpm_tat_make_style();
       $this->bpm_tat_add_hooks();
     }
 
@@ -55,19 +67,20 @@
     /**
      * Add hooks.
      *
-     * @since 1.0.0
-     *
      * @hooked bpm_tat_button_add_to_admin_menu
-     * @hooked styles
-     * @hooked script
+     * @hooked bpm_tat_enqueue_inline_style
+     * @hooked bpm_tat_enqueue_inline_script
+     *
+     * @return void
+     * @since 1.0.0
      */
     public function bpm_tat_add_hooks()
     {
       $this->bpm_tat_add_settings_page();
       if (!is_admin()):
         add_action('admin_bar_menu', [$this, 'bpm_tat_button_add_to_admin_menu'], 1);
-        $this->bpm_tat_add_scripts();
-        $this->bpm_tat_add_styles();
+        add_action('wp_enqueue_scripts', [$this, 'bpm_tat_enqueue_inline_script']);
+        add_action('wp_enqueue_scripts', [$this, 'bpm_tat_enqueue_inline_style']);
       endif;
     }
 
@@ -164,17 +177,34 @@
       }
     }
 
+
     /**
-     * Include some Javascript
+     * Enqueue inline script
+     *
+     * @return void
+     * @since 1.0.1
+     */
+    public function bpm_tat_enqueue_inline_script()
+    {
+      if (!wp_script_is('tat_scripts', 'enqueued')):
+        wp_register_script('tat_scripts', false, [], '1.0.1', 1);
+        wp_enqueue_script('tat_scripts');
+        wp_add_inline_script('tat_scripts', $this->script);
+      endif;
+    }
+
+    /**
+     * Make Javascript to enqueue with wp_add_inline_script
      *
      * @return void
      * @since 1.0.0
-     *
      */
-    public function bpm_tat_add_scripts()
+    public function bpm_tat_make_script()
     {
-      ob_start(); ?>
-      function bpm_tat_make_btn() {
+      ob_start();
+      ?>
+      function bpm_tat_make_btn()
+      {
       const tatBtn = document.createElement('a');
       tatBtn.style.visibility = 'hidden';
       tatBtn.id = 'restoreAdminToolbar';
@@ -185,12 +215,14 @@
       document.body.insertBefore(tatBtn, document.getElementById('wpadminbar'));
       }
       bpm_tat_make_btn();
-      function bpm_tat_remove() {
+      function bpm_tat_remove()
+      {
       const wpadbr = document.getElementById('wpadminbar');
       wpadbr.style.display = 'none';
       document.documentElement.style.setProperty('margin-top', '0px', 'important');
       }
-      function bpm_tat_toggle() {
+      function bpm_tat_toggle()
+      {
       bpm_tat_remove();
       const tatBtn = document.getElementById('restoreAdminToolbar');
       tatBtn.style.visibility = 'visible';
@@ -202,27 +234,39 @@
       };
       }
       <?php
-      $tat_scripts = ob_get_clean();
-      if (!wp_script_is('tat_scripts')):
-        wp_register_script('tat_scripts', false, [], '1.0.0', 1);
-        wp_enqueue_script('tat_scripts');
-      endif;
-      wp_add_inline_script('tat_scripts', $tat_scripts);
+      $this->script = ob_get_clean();
     }
 
+
     /**
-     * Include some CSS
+     * Enqueue inline style
+     *
+     * @return void
+     * @since 1.0.1
+     */
+    public function bpm_tat_enqueue_inline_style()
+    {
+      if (!wp_style_is('tat_styles', 'enqueued')):
+        wp_register_style('tat_styles', FALSE);
+        wp_enqueue_style('tat_styles');
+        wp_add_inline_style('tat_styles', $this->style);
+      endif;
+    }
+
+
+    /**
+     * Make CSS to enqueue with wp_add_inline_style
      *
      * @return void
      * @since 1.0.0
-     *
      */
-    public function bpm_tat_add_styles()
+    public function bpm_tat_make_style()
     {
       $color = get_option('bpm_tat_options') ? get_option('bpm_tat_options')['color'] : '#FFFFFF'; // bool false if unset or [ 'color' => string #?????? ]
       ob_start();
       ?>
-      #restoreAdminToolbar {
+      #restoreAdminToolbar
+      {
       position: absolute;
       z-index: 9999999;
       color: <?php echo esc_attr($color); ?>;
@@ -240,12 +284,7 @@
       padding: 0 8px;
       }
       <?php
-      $tat_styles = ob_get_clean();
-      if (!wp_style_is('tat_styles')):
-        wp_register_style('tat_styles', FALSE);
-        wp_enqueue_style('tat_styles');
-      endif;
-      wp_add_inline_style('tat_styles', $tat_styles);
+      $this->style = ob_get_clean();
     }
 
     /**
@@ -253,6 +292,7 @@
      *
      * Remove the plugin option, where settings are stored
      *
+     * @return void
      * @since 1.0.0
      */
     public static function bpm_tat_add_deactivation_actions()
