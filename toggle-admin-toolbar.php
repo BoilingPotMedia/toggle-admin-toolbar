@@ -177,7 +177,6 @@
       }
     }
 
-
     /**
      * Enqueue inline script
      *
@@ -237,7 +236,6 @@
       $this->script = ob_get_clean();
     }
 
-
     /**
      * Enqueue inline style
      *
@@ -252,7 +250,6 @@
         wp_add_inline_style('tat_styles', $this->style);
       endif;
     }
-
 
     /**
      * Make CSS to enqueue with wp_add_inline_style
